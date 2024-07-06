@@ -1,10 +1,12 @@
 /*LAB 2 Sistemas operativos
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <math.h>
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +24,7 @@ int main(int argc, char *argv[])
     /*getOpt*/
     int opt; // option
     /*variables para el excev del broker */
+    char * N; /*prefijo imagenes*/
 
    char * f; /*cantidad de filtros*/
     char * p; /* factor de saturacion*/
@@ -39,8 +42,8 @@ int main(int argc, char *argv[])
         {
         case 'N':
             strcpy(nombrePrefijo, optarg);
-            printf("prefijo  %s\n", nombrePrefijo);
             N_verification = 1;
+            N= optarg;
             break;
         case 'f':
             cantidadFiltros = atoi(optarg);
@@ -132,16 +135,29 @@ int main(int argc, char *argv[])
     /*
     CREACION DEL BROKER
     */
-    char *argv2[] = {"./lab2", "-N", f, "-f", p, "-u", u, "-v", v, "-W", W, "C",C,"R",R, NULL};
+    char *argv2[] = {"./lab2", "-N",N, "-f",f, "-p", p, "-u", u, "-v", v,"-C",C,"-R",R,"-W", W, NULL};
 
     // Crear el proceso hijo
     int pid = fork();
     if (pid == 0)
     {
+        printf("ARRAY 2: \n");
+        for (int i = 0; i < 18; i++)
+        {
+            printf("argv[%i] = %s \n", i, argv2[i]);
+        }
+        
         execv("./broker", argv2);
-        printf("Error execv en broker");
+        perror("Error execv en broker");
         return 0;
     }
+     else
+    {   // Esperar a que el proceso hijo termine
+        printf("Entre al else");
+        waitpid(pid, NULL, 0);
+        printf("Sali del waitpid? \n");
+    }
+
 
     return 0;
 }
