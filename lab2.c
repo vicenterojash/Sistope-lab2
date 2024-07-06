@@ -153,9 +153,9 @@ int main(int argc, char *argv[])
     }
      else
     {   // Esperar a que el proceso hijo termine
-        printf("Entre al else");
+        printf("Entre al else \n");
         waitpid(pid, NULL, 0);
-        printf("Sali del waitpid? \n");
+        printf("Sali del waitpid \n");
     }
 
 
