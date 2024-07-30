@@ -48,6 +48,9 @@ argv[17] = (null) (ultima posicion nula por necesidades de la implementacion)
     char * nombreArchivoCSV= argv[14];
     int cantidadWorkers = atoi(argv[16]);
 
+    int pid;  
+    int lista_pids[cantidadWorkers]; // Lista de pids de los procesos hijos
+    int flag = -1; // bandera para identificar a padre
     /*Se imprime toda la informacion del array para saber si se transifirio correctamente la informacion */
     printf("Argv de Broker \n :");
     for (int i = 0; i < 18; i++)
@@ -55,6 +58,28 @@ argv[17] = (null) (ultima posicion nula por necesidades de la implementacion)
             printf("argv[%i] = %s \n", i, argv[i]);
         }
 
+    int fd[cantidadWorkers][2];  // pipe para los procesos hijos
+    int fd2[cantidadWorkers][2]; // pipe para proceso padre
+    for (int i; i < cantidadWorkers ;i++){
+        pipe(fd[i]);
+        pipe(fd2[i]);
+    }
+
+    for (int i = 0; i < cantidadWorkers; i++)
+    { // crear hijos
+
+        pid = fork();
+        if (pid == 0)
+        {                // HIJO
+            flag = i; // solo los hijos tendrán esa bandera en positivo (indice), el padre conservará su bandera en -1
+            break; // el padre conservará su bandera en -1
+        }
+        else if (pid > 0)
+        {
+            lista_pids[i] = pid; // guardar los pid en la lista
+            
+        }
+    }
     
    
     return 0;
